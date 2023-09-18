@@ -1,19 +1,49 @@
-const allTips = Array.from(document.getElementsByClassName('has-tooltip'));
-let lastElement
+function click(e) {
+	removeTooltips(e);
 
-function toolTipsActive(e) {
-    e.preventDefault();
-    let deletableElement = document.getElementsByClassName("tooltip tooltip_active")[0];
-    if (deletableElement) {
-        deletableElement.remove();
-    }
-    let tipText = this.title;
-    this.insertAdjacentHTML('afterend', `<div class="tooltip tooltip_active">${tipText}</div>`);
+	let targetTop = e.target.offsetTop;
+
+	let left = e.target.offsetLeft - window.scrollX;
+	let top = targetTop - window.scrollY + e.target.offsetHeight;
+
+	document.getElementsByTagName("body")[0].innerHTML += `<div class="tooltip"
+      style="
+        left: ${left}px;
+        top: ${top}px;
+        display: block;
+      ">
+      ${e.target.getAttribute("title")}
+    </div>`;
+
+	let newTooltip = document.getElementsByClassName("tooltip")[0];
+
+	if (top + newTooltip.offsetHeight > window.innerHeight) {
+		top = targetTop - window.scrollY - newTooltip.offsetHeight;
+		newTooltip.style.top = `${top}px`;
+	}
+
+	addEvents();
+	e.preventDefault();
 }
 
-
-
-for (let i = 0; i < allTips.length; i++) {
-    const element = allTips[i];
-    element.addEventListener('click', toolTipsActive);
+function removeTooltips(e) {
+	if (!e.defaultPrevented) {
+    [...document.getElementsByClassName("tooltip")].forEach(el => {
+			el.remove();
+		});
+	}
 }
+
+function addEvents() {
+	const tooltipItems = document.getElementsByClassName("has-tooltip");
+  [...tooltipItems].forEach(tooltipItem => {
+		tooltipItem.addEventListener("click", click);
+	});
+	document
+		.getElementsByTagName("body")[0]
+		.addEventListener("click", removeTooltips);
+	window.addEventListener("scroll", removeTooltips);
+	window.addEventListener("resize", removeTooltips);
+}
+
+addEvents();

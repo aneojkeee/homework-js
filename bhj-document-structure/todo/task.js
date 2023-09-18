@@ -1,24 +1,29 @@
-const submitTask = document.getElementById('tasks__add');
+let inputBox = document.getElementById("task__input");
+let tasksList = document.getElementById("tasks__list");
 
-function addTask(e) {
-
-    if ((e.code === 'Enter' || this.textContent === "Добавить") & document.getElementById('task__input').value != "") {
-        let taskText = document.getElementById('task__input').value;
-        let newTask = document.createElement('div');
-        let taskList = document.getElementById('tasks__list');
-        newTask.classList.add('task');
-        newTask.innerHTML = `<div class="task__title">${taskText}</div><a href="#" class="task__remove">&times;</a>`;
-        taskList.appendChild(newTask);
-        document.getElementById('task__input').value = "";
-        let taskRemove = document.getElementsByClassName('task__remove')[Array.from(document.getElementsByClassName('task__remove')).length - 1];
-        taskRemove.addEventListener('click', deleteTask);
-    }
-
+const removeTask = e => {
+	e.target.closest(".task").remove();
 }
 
-function deleteTask() {
-    this.closest('div.task').remove();
+const addTask = e => {
+	tasksList.innerHTML +=
+		`<div class="task">
+      <div class="task__title">
+        ${inputBox.value}
+      </div>
+      <a href="#" class="task__remove">&times;</a>
+    </div>`;
+
+	inputBox.value = "";
+
+  [...(tasksList.getElementsByClassName("task__remove"))].forEach(element => {
+		element.addEventListener("click", removeTask)
+	});
+
+	e.preventDefault();
 }
 
-submitTask.addEventListener('click', addTask);
-document.addEventListener('keydown', addTask);
+document.getElementById("tasks__add").addEventListener("click", addTask);
+inputBox.addEventListener("keypress", e => {
+	if (e.keyCode == 13) addTask(e);
+});
