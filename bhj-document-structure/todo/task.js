@@ -4,9 +4,8 @@ const tasksInput = document.getElementById("task__input");
 const tasksAddButton = document.getElementById("tasks__add");
 const tasksList = document.getElementById("tasks__list");
 
-function taskAdd() {
+function taskAdd(evt) {
     if (tasksInput.value.trim() !== "") { 
-        event.preventDefault();
 
         tasksList.insertAdjacentHTML("beforeend", `
             <div class="task">
@@ -16,18 +15,14 @@ function taskAdd() {
             <a href="#" class="task__remove">&times;</a>
             </div>`
         );
-
+		
         tasksInput.value = "";
     }
+
+	evt.preventDefault();
 }
 
 tasksAddButton.addEventListener("click", taskAdd);
-
-tasksInput.addEventListener("keydown", event => {
-    if (event.key === 13) {
-        taskAdd();
-    }
-});
 
 tasksList.addEventListener("click", function(event) {
     if (event.target.classList.contains("task__remove")) {
